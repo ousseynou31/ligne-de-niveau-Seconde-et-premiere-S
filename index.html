@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lignes de niveau – sommes vectorielles</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F8FD;--paper:#fff;--ink:#16254A;--mute:#5B6783;--line:#CBD6EA;--grid:#DCE7F6;--pen:#C42B2B;--ok:#1E6B52;--btn:#16254A;--onbtn:#fff;--soft:#E6EDF9;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1630;--paper:#16224A;--ink:#E8EEFB;--mute:#9DAACE;--line:#2D3B6B;--grid:#233160;--pen:#FF8077;--ok:#6FD3AE;--btn:#E8EEFB;--onbtn:#0E1630;--soft:#1E2B59}}
+:root[data-theme="dark"]{--bg:#0E1630;--paper:#16224A;--ink:#E8EEFB;--mute:#9DAACE;--line:#2D3B6B;--grid:#233160;--pen:#FF8077;--ok:#6FD3AE;--btn:#E8EEFB;--onbtn:#0E1630;--soft:#1E2B59}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',system-ui,sans-serif;line-height:1.5}
+main{max-width:640px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:1.65rem;margin:0 0 4px}
+h2{font-size:1.2rem;margin:0 0 8px}
+.lead{margin:0 0 16px;color:var(--mute)}
+.math,.eq{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif}
+.eq{font-size:1.3rem;background:var(--paper);border:1px solid var(--line);padding:16px 12px 10px;margin-bottom:14px;overflow-x:auto;white-space:nowrap}
+.v{position:relative;display:inline-block;margin-top:.55em;line-height:1.1}
+.v::before{content:"→";position:absolute;left:0;right:0;text-align:center;top:-.8em;font-size:.72em;line-height:1}
+fieldset,.blk{border:0;border-left:3px solid var(--line);margin:0 0 16px;padding:0 0 0 12px}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.t{font-weight:700}
+.step{display:flex;align-items:center;gap:8px}
+.step button{width:40px;height:40px;font-size:1.3rem;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:6px}
+.step output{min-width:5.5em;text-align:center}
+.term{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:end;margin-bottom:8px}
+.term .mm{padding-bottom:10px;color:var(--mute)}
+label{display:block;font-size:.85rem;color:var(--mute)}
+input,select{width:100%;box-sizing:border-box;margin-top:2px;padding:10px;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:10px}
+.seg button{padding:10px;font:inherit;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.seg button:first-child{border-radius:6px 0 0 6px}.seg button:last-child{border-radius:0 6px 6px 0;border-left:0}
+.seg button[aria-pressed="true"]{background:var(--soft);border-color:var(--ink);font-weight:700}
+#go{width:100%;padding:14px;font:inherit;font-weight:700;font-size:1.05rem;background:var(--btn);color:var(--onbtn);border:0;border-radius:8px}
+.ex{margin:14px 0 0;color:var(--mute);font-size:.9rem}
+.ex button{display:block;width:100%;text-align:left;margin-top:6px;padding:10px;font:inherit;font-family:"Cambria Math","STIX Two Math",serif;font-size:1.05rem;border:1px dashed var(--line);background:transparent;color:var(--ink);border-radius:6px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+#res{margin-top:26px;border-top:2px solid var(--ink);padding-top:16px}
+.ans{border-left:4px solid var(--pen);padding:4px 0 4px 12px;margin:0 0 14px}
+.ans b{font-family:Caveat,cursive;font-size:1.6rem;color:var(--pen);display:block;line-height:1}
+.ans p{margin:4px 0 0;font-size:1.1rem}
+svg{width:100%;height:auto;display:block;border:1px solid var(--line)}
+svg text{font-family:Atkinson Hyperlegible,sans-serif;font-size:.6px}
+.cap{font-size:.85rem;color:var(--mute);margin:6px 0 16px}
+ol{padding-left:1.3em;margin:0}
+li{margin:0 0 14px;line-height:2}
+.err{color:var(--pen);font-weight:700}
+.dr{touch-action:none;cursor:grab}
+.dev{margin-top:32px;padding-top:14px;border-top:1px solid var(--line);font-size:.9rem;line-height:1.7;color:var(--mute)}
+.dev b{color:var(--ink)}
+.dev a{color:var(--ink)}
+.ex summary{cursor:pointer;font-weight:700;color:var(--ink);padding:8px 0}
+.ex h3{font-size:.9rem;margin:14px 0 0;color:var(--mute)}
+.ex button{line-height:1.9}
+.cp{margin:0 0 16px;padding:10px 14px;font:inherit;border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:6px}
+.zm{display:flex;align-items:center;gap:8px;margin:8px 0 0;flex-wrap:wrap}
+.zm button{min-width:40px;height:40px;padding:0 12px;font:inherit;font-size:1.3rem;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:6px}
+.zm button:disabled{opacity:.4}
+.zm .rz{font-size:.9rem}
+.zm output{min-width:3.5em;text-align:center}
+.zh{font-size:.85rem;color:var(--mute);margin:4px 0 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Lignes de niveau</h1>
+<p class="lead">Réduisez une somme vectorielle et trouvez l’ensemble des points M.</p>
+<div class="eq" id="eq" aria-live="polite"></div>
+<fieldset id="fL"></fieldset>
+<div class="blk" id="fR"></div>
+<button id="go" type="button">Résoudre</button>
+<details class="ex" open><summary>20 exercices types : touchez-en un pour voir la solution</summary><div id="exl"></div></details>
+<p id="err" class="err" hidden></p>
+<section id="res" hidden><h2>Solution</h2><div class="eq" id="eq2"></div><div class="ans" id="ans"></div><svg id="fg" viewBox="-7 -6 14 10" role="img" aria-label="Schéma de l’ensemble de points"></svg><div class="zm" role="group" aria-label="Zoom de la figure"><button type="button" id="zo" aria-label="Zoom arrière">−</button><output id="zv" aria-live="polite">×1</output><button type="button" id="zi" aria-label="Zoom avant">+</button><button type="button" id="zr" class="rz">Recentrer</button></div><p class="zh" id="zh" hidden>Figure zoomée : faites-la glisser pour la déplacer.</p><p class="cap" id="cap"></p><h2>Rédaction</h2><ol id="steps"></ol><button class="cp" type="button" id="cpy">Copier la rédaction</button></section>
+<footer class="dev"><b>Développé par Ousseynou Diouf</b><br>Formateur en mathématiques au CRFPE de Kédougou<br><a href="mailto:dioufousseynou31@gmail.com">dioufousseynou31@gmail.com</a><br><a href="tel:+221770153389">77 015 33 89</a></footer>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const PT={A:[-3,-1.5],B:[3,-1.5],C:[0,3],D:[-5,3],E:[5,3.5]};
+const NM=Object.keys(PT),EPS=1e-7;
+let L=[{c:'1',p:'A'},{c:'2',p:'B'}],R=[{c:'1',p:'B'},{c:'1',p:'C'}],mode='k',K='6';
+const num=s=>parseFloat(String(s).trim().replace(',','.').replace('−','-'));
+const vec=s=>`<span class="v">${s}</span>`;
+const nm=h=>`‖${h}‖`;
+function fr(x){const r=Math.round(x);if(Math.abs(x-r)<EPS)return String(r);for(let d=2;d<=12;d++){const n=Math.round(x*d);if(Math.abs(x*d-n)<EPS)return n+'/'+d}return String(+x.toFixed(2)).replace('.',',')}
+const fmt=x=>fr(x).replace('-','−');
+const fd=x=>String(+x.toFixed(2)).replace('.',',');
+function cf(a){if(Math.abs(a-1)<EPS)return'';if(Math.abs(a+1)<EPS)return'−';const f=fmt(a);return(f.includes('/')?'('+f+')':f)+'\u202F'}
+function combo(list){let h='';list.forEach(([c,n])=>{if(Math.abs(c)<EPS)return;h+=(h===''?(c<0?'−':''):(c<0?' − ':' + '))+cf(Math.abs(c))+vec(n)});return h||vec('0')}
+const sumM=l=>combo(l.map(([c,p])=>[c,'M'+p]));
+function merge(list){const m=new Map();list.forEach(([c,p])=>m.set(p,(m.get(p)||0)+c));return[...m].filter(([p,c])=>Math.abs(c)>EPS)}
+function red(list){const m=merge(list),s=m.reduce((a,[,c])=>a+c,0);let x=0,y=0;m.forEach(([p,c])=>{x+=c*PT[p][0];y+=c*PT[p][1]});
+ if(Math.abs(s)>EPS)return{t:'pt',m,s,G:[x/s,y/s]};return{t:'k',m,s:0,w:[x,y],k:Math.hypot(x,y)}}
+const sumCoef=(l,s)=>l.map(([c],i)=>i===0?fmt(c):(c<0?' − ':' + ')+fmt(Math.abs(c))).join('')+' = '+fmt(s);
+
+function block(side){
+ const arr=side==='L'?L:R,title=side==='L'?'Premier membre':'Second membre';
+ let h=`<div class="head"><span class="t">${title}</span><div class="step"><button type="button" data-a="dec" data-s="${side}" aria-label="Retirer un terme">−</button><output>${arr.length} terme${arr.length>1?'s':''}</output><button type="button" data-a="inc" data-s="${side}" aria-label="Ajouter un terme">+</button></div></div>`;
+ arr.forEach((t,i)=>{h+=`<div class="term"><label>Coefficient<input inputmode="decimal" value="${t.c}" data-s="${side}" data-i="${i}" data-f="c"></label><span class="mm">×</span><label>Vecteur<select data-s="${side}" data-i="${i}" data-f="p">${NM.map(n=>`<option value="${n}"${n===t.p?' selected':''}>M${n}</option>`).join('')}</select></label></div>`});
+ return h}
+function paint(){
+ $('#fL').innerHTML=block('L');
+ const seg=`<div class="head"><span class="t">Le second membre est</span></div><div class="seg"><button type="button" data-m="k" aria-pressed="${mode==='k'}">Un nombre k</button><button type="button" data-m="v" aria-pressed="${mode==='v'}">Une somme vectorielle</button></div>`;
+ $('#fR').innerHTML=seg+(mode==='k'?`<label>Valeur de k<input id="kIn" inputmode="decimal" value="${K}"></label>`:block('R'));
+ live();hideRes()}
+function live(){const rd=a=>a.map(t=>{const c=num(t.c);return[isNaN(c)?0:c,t.p]});
+ $('#eq').innerHTML=nm(sumM(rd(L)))+' = '+(mode==='k'?(isNaN(num(K))?'k':fmt(num(K))):nm(sumM(rd(R))))}
+function hideRes(){$('#res').hidden=true;$('#err').hidden=true}
+function err(m){hideRes();const e=$('#err');e.hidden=false;e.textContent=m}
+
+function side(r,list,g,lab){
+ let h=`<b>${lab}.</b> Somme des coefficients : ${sumCoef(list,r.s)}`;
+ if(list.length!==r.m.length)h+=' (les points identiques sont regroupés)';
+ if(r.t==='pt'){
+  const P0=r.m[0][0];
+  if(r.m.length===1)h+=` ≠ 0. Tout se ramène à un seul point : ${sumM(list)} = ${cf(r.s)}${vec('M'+P0)}, donc ${g} = ${P0}.`;
+  else h+=` ≠ 0. Le barycentre ${g} = bar{${r.m.map(([p,c])=>`(${p} ; ${fmt(c)})`).join(' ; ')}} existe et ${sumM(list)} = ${cf(r.s)}${vec('M'+g)}.<br>Construction de ${g} : ${vec(P0+g)} = ${combo(r.m.slice(1).map(([p,c])=>[c/r.s,P0+p]))}.`;
+  h+=`<br>Donc ${nm(sumM(list))} = ${fmt(Math.abs(r.s))} × M${g}.`;
+ }else{
+  const P0=r.m.length?r.m[0][0]:'';
+  h+=` : la somme est un vecteur constant, indépendant de M. ${sumM(list)} = ${r.m.length>1?combo(r.m.slice(1).map(([p,c])=>[c,P0+p])):vec('0')}, de norme ${fd(r.k)}.`;
+ }
+ return h}
+
+function solve(live){
+ const rd=a=>{const o=[];for(const t of a){const c=num(t.c);if(isNaN(c))return null;o.push([c,t.p])}return o};
+ const l=rd(L);if(!l)return err('Entrez un nombre pour chaque coefficient du premier membre.');
+ let a=red(l),b,rl=null;
+ if(mode==='k'){const k=num(K);if(isNaN(k))return err('Entrez la valeur de k.');b={t:'k',k,given:true}}
+ else{rl=rd(R);if(!rl)return err('Entrez un nombre pour chaque coefficient du second membre.');b=red(rl)}
+ const ga='G',gb=a.t==='pt'?'H':'G',P1=a.t==='pt'?a:null,P2=b.t==='pt'?b:null;
+ let shape,ans,eq2,cons,quick=null,extra={pts:[],segs:[]};
+ if(P1&&P2){
+  const u=Math.abs(P1.s),v=Math.abs(P2.s),G=P1.G,H=P2.G,d=Math.hypot(G[0]-H[0],G[1]-H[1]);
+  eq2=`${fmt(u)} × MG = ${fmt(v)} × MH`;
+  if(Math.abs(u-v)<EPS){
+   if(d<EPS){shape={t:'plane'};ans='Tous les points du plan.';cons='G et H sont confondus et les coefficients sont égaux : l’égalité est vraie pour tout point M.'}
+   else{shape={t:'line',p:[(G[0]+H[0])/2,(G[1]+H[1])/2],d:[-(H[1]-G[1]),H[0]-G[0]]};ans='La médiatrice du segment [GH].';cons=`Comme ${fmt(u)} = ${fmt(v)}, l’égalité devient MG = MH : M est à égale distance de G et de H. Construction : tracer la médiatrice de [GH].`;
+   if(P1.m.length===1&&P2.m.length===1){const X=P1.m[0][0],Y=P2.m[0][0];ans=`La médiatrice du segment [${X}${Y}].`;eq2=`M${X} = M${Y}`;
+    quick=[`<b>Observation.</b> ${Math.abs(u-1)<EPS?'':`Les deux membres ont le même coefficient ${fmt(u)} : on le simplifie. `}${nm(vec('M'+X))} = ${nm(vec('M'+Y))} signifie M${X} = M${Y} : le point M est à égale distance de ${X} et de ${Y}.`,`<b>Conclusion.</b> Par définition, l’ensemble des points équidistants de ${X} et de ${Y} est la médiatrice du segment [${X}${Y}].`]}}
+  }else if(d<EPS){shape={t:'point',p:G};ans='Le point G seul (G = H).';cons='MG × (|s| − |s′|) = 0 avec |s| ≠ |s′|, donc MG = 0 et M = G.'}
+  else{
+   const A2=u*u,B2=v*v,C=[(A2*G[0]-B2*H[0])/(A2-B2),(A2*G[1]-B2*H[1])/(A2-B2)];
+   const r2=C[0]**2+C[1]**2-(A2*(G[0]**2+G[1]**2)-B2*(H[0]**2+H[1]**2))/(A2-B2);
+   extra.pts.push({n:'Ω',p:C});
+   if(r2<-EPS){shape={t:'empty'};ans='Aucun point : l’ensemble est vide.';cons='Le calcul donne un rayon impossible.'}
+   else{shape={t:'circle',c:C,r:Math.sqrt(Math.max(r2,0))};ans=`Un cercle de centre Ω = bar{(G ; ${fmt(A2)}), (H ; ${fmt(-B2)})} et de rayon ≈ ${fd(shape.r)}.`;cons=`MG/MH = ${fmt(v)}/${fmt(u)} ≠ 1 : on obtient un cercle d’Apollonius (hors programme de Seconde S, vu en Terminale). En élevant au carré : ${fmt(A2)}·MG² = ${fmt(B2)}·MH², soit ${fmt(A2)}·MG² + (${fmt(-B2)})·MH² = 0. Les carrés MG² et MH² restent positifs ; ${fmt(A2)} et ${fmt(-B2)} sont les coefficients du barycentre Ω (somme ${fmt(A2-B2)} ≠ 0, donc Ω existe).`}
+  }
+ }else if(P1||P2){
+  const p=P1||P2,g=P1?ga:gb,q=P1?b:a,k=q.k,u=Math.abs(p.s);
+  eq2=`${fmt(u)} × M${g} = ${fmt(k)}`;
+  if(k<-EPS){shape={t:'empty'};ans='Aucun point : l’ensemble est vide.';cons='Une norme est toujours positive ou nulle, elle ne peut pas être égale à un nombre négatif.'}
+  else if(k<EPS){shape={t:'point',p:p.G};ans=`Le point ${g} seul : l’ensemble est {${g}}.`;cons=`M${g} = 0 équivaut à M = ${g}.`}
+  else{const r=k/u;shape={t:'circle',c:p.G,r};ans=`Le cercle de centre ${g} et de rayon r = ${fmt(k)} ÷ ${fmt(u)} = ${fmt(r)} (unités du schéma).`;cons=`M${g} = ${fmt(k)} ÷ ${fmt(u)} = ${fmt(r)}. Construction : placer ${g}, puis tracer le cercle de centre ${g} et de rayon ${fmt(r)}.`}
+ }else{
+  eq2=`${fd(a.k)} = ${fd(b.k)}`;
+  if(Math.abs(a.k-b.k)<1e-6&&b.k>=0){shape={t:'plane'};ans='Tous les points du plan.';cons='Les deux membres sont des constantes égales : l’égalité est vraie pour tout point M.'}
+  else{shape={t:'empty'};ans='Aucun point : l’ensemble est vide.';cons='Les deux membres sont des constantes différentes : l’égalité est fausse pour tout point M.'}
+ }
+ const used=new Set([...a.m.map(x=>x[0]),...(b.m||[]).map(x=>x[0])]);
+ [[a,ga],[b,gb]].forEach(([r,g])=>{if(r.t==='pt'&&r.m.length>1){extra.pts.push({n:g,p:r.G});extra.segs.push([PT[r.m[0][0]],r.G])}});
+ const steps=[side(a,l,ga,'Premier membre')];
+ steps.push(mode==='v'?side(b,rl,gb,'Second membre'):`<b>Second membre.</b> C’est la constante k = ${fmt(num(K))}.`);
+ steps.push(`<b>Équation réduite.</b> ${eq2}`,`<b>Conclusion.</b> ${cons}`);
+ if(quick){steps.length=0;steps.push(...quick)}
+ const eqTxt=nm(sumM(l))+' = '+(mode==='k'?fmt(num(K)):nm(sumM(rl)));
+ $('#err').hidden=true;const r=$('#res');r.hidden=false;
+ $('#eq2').innerHTML=eqTxt;$('#ans').innerHTML=`<b>Réponse</b><p>${ans}</p>`;$('#fg').innerHTML=fig(shape,used,extra);
+ $('#cap').textContent=`Schéma à l’échelle : un carreau = 1 unité, AB = ${fd(Math.hypot(PT.A[0]-PT.B[0],PT.A[1]-PT.B[1]))} unités. Déplacez A, B, C… avec le doigt pour adapter la figure à votre exercice.`;
+ $('#steps').innerHTML=steps.map(s=>`<li>${s}</li>`).join('');
+ if(!live)r.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'})}
+
+function fig(shape,used,ex){
+ const f=z=>+z.toFixed(3);
+ let s=`<defs><pattern id="g" width="1" height="1" patternUnits="userSpaceOnUse"><path d="M1 0H0V1" fill="none" stroke="var(--grid)" stroke-width=".04"/></pattern></defs><rect x="-30" y="-30" width="60" height="60" fill="var(--paper)"/><rect x="-30" y="-30" width="60" height="60" fill="url(#g)"/>`;
+ if(shape.t==='plane')s+=`<rect x="-30" y="-30" width="60" height="60" fill="var(--pen)" fill-opacity=".12"/>`;
+ if(shape.t==='circle')s+=`<circle cx="${f(shape.c[0])}" cy="${f(-shape.c[1])}" r="${f(shape.r)}" fill="var(--pen)" fill-opacity=".1" stroke="var(--pen)" stroke-width=".08"/>`;
+ if(shape.t==='line'){const n=Math.hypot(...shape.d),d=shape.d.map(z=>z/n*30),p=shape.p;s+=`<line x1="${f(p[0]-d[0])}" y1="${f(-(p[1]-d[1]))}" x2="${f(p[0]+d[0])}" y2="${f(-(p[1]+d[1]))}" stroke="var(--pen)" stroke-width=".08"/>`}
+ if(shape.t==='point')s+=`<circle cx="${f(shape.p[0])}" cy="${f(-shape.p[1])}" r=".2" fill="var(--pen)"/>`;
+ ex.segs.forEach(([p,q])=>{s+=`<line x1="${f(p[0])}" y1="${f(-p[1])}" x2="${f(q[0])}" y2="${f(-q[1])}" stroke="var(--mute)" stroke-width=".05" stroke-dasharray=".2 .15"/>`});
+ used.forEach(n=>{const p=PT[n];s+=`<circle cx="${p[0]}" cy="${-p[1]}" r=".13" fill="var(--ink)"/><text x="${p[0]+.2}" y="${-p[1]-.2}" fill="var(--ink)">${n}</text><circle class="dr" data-n="${n}" cx="${p[0]}" cy="${-p[1]}" r=".6" fill="transparent"/>`});
+ ex.pts.forEach(o=>{s+=`<circle cx="${f(o.p[0])}" cy="${f(-o.p[1])}" r=".16" fill="var(--ok)"/><text x="${f(o.p[0]+.22)}" y="${f(-o.p[1]-.22)}" fill="var(--ok)" font-weight="700">${o.n}</text>`});
+ return s}
+
+const DEF=JSON.parse(JSON.stringify(PT));
+const e=(g,L,r)=>Array.isArray(r)?{g,L,R:r}:{g,L,k:r};
+const N1='Niveau 1 : deux points',N2='Niveau 2 : trois points et médiatrices',N3='Niveau 3 : somme nulle (vecteur constant)',NT='Hors programme (niveau Terminale)';
+const EX=[
+e(N1,[[1,'A'],[1,'B']],4),e(N1,[[1,'A'],[2,'B']],6),e(N1,[[2,'A'],[1,'B']],9),e(N1,[[3,'A'],[1,'B']],8),e(N1,[[1,'A'],[3,'B']],12),
+e(N1,[[2,'A'],[-1,'B']],4),e(N1,[[3,'A'],[-1,'B']],6),e(N1,[[1,'A'],[1,'B']],0),e(N1,[[1,'A'],[2,'B']],-2),e(N1,[[1,'A']],[[1,'B']]),
+e(N2,[[1,'A'],[1,'B'],[1,'C']],6),e(N2,[[1,'A'],[1,'B'],[2,'C']],8),e(N2,[[2,'A'],[1,'B'],[-1,'C']],4),e(N2,[[2,'A'],[3,'B'],[1,'C']],12),
+e(N2,[[1,'A'],[1,'B']],[[1,'C'],[1,'D']]),e(N2,[[1,'A'],[2,'B']],[[2,'A'],[1,'B']]),
+e(N3,[[1,'A'],[1,'B']],[[1,'A'],[-1,'B']]),e(N3,[[1,'A'],[1,'B'],[1,'C']],[[1,'A'],[1,'B'],[-2,'C']]),e(N3,[[2,'A'],[-1,'B'],[-1,'C']],[[1,'B'],[1,'C']]),
+e(NT,[[1,'A'],[1,'B']],[[1,'A'],[1,'B'],[2,'C']])];
+(function(){let h='',g='';EX.forEach((x,i)=>{if(x.g!==g){g=x.g;h+=`<h3>${g}</h3>`}h+=`<button type="button" data-ex="${i}">${i+1}. ${nm(sumM(x.L))} = ${x.R?nm(sumM(x.R)):fmt(x.k)}</button>`});$('#exl').innerHTML=h})();
+function setEx(i){const x=EX[i];V.z=1;V.cx=0;V.cy=-1;applyView();Object.keys(DEF).forEach(n=>{PT[n]=[...DEF[n]]});L=x.L.map(([c,p])=>({c:String(c),p}));if(x.R){R=x.R.map(([c,p])=>({c:String(c),p}));mode='v'}else{mode='k';K=String(x.k)}}
+document.addEventListener('input',e=>{const t=e.target,s=t.dataset.s;
+ if(t.id==='kIn')K=t.value;else if(s)(s==='L'?L:R)[+t.dataset.i][t.dataset.f]=t.value;else return;live();hideRes()});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.a){const arr=b.dataset.s==='L'?L:R;if(b.dataset.a==='inc'&&arr.length<5)arr.push({c:'1',p:NM[arr.length%5]});if(b.dataset.a==='dec'&&arr.length>1)arr.pop();paint()}
+ else if(b.dataset.m){mode=b.dataset.m;paint()}
+ else if(b.dataset.ex){setEx(+b.dataset.ex);paint();solve()}
+ else if(b.id==='go')solve()});
+const fg=$('#fg');let drag=null,pan=null;const V={z:1,cx:0,cy:-1},ZS=[.5,.75,1,1.5,2,3,4];
+function applyView(){const w=14/V.z,h=10/V.z,f=z=>+z.toFixed(3);fg.setAttribute('viewBox',`${f(V.cx-w/2)} ${f(V.cy-h/2)} ${f(w)} ${f(h)}`);$('#zv').textContent='×'+String(V.z).replace('.',',');$('#zi').disabled=V.z>=ZS[ZS.length-1];$('#zo').disabled=V.z<=ZS[0];$('#zh').hidden=V.z<=1;fg.style.touchAction=V.z>1?'none':'';fg.style.cursor=V.z>1?'move':''}
+function zoom(d){const i=ZS.indexOf(V.z)+d;if(i<0||i>=ZS.length)return;V.z=ZS[i];if(V.z<=1){V.cx=0;V.cy=-1}applyView()}
+$('#zi').onclick=()=>zoom(1);$('#zo').onclick=()=>zoom(-1);$('#zr').onclick=()=>{V.z=1;V.cx=0;V.cy=-1;applyView()};
+applyView();
+fg.addEventListener('pointerdown',e=>{const n=e.target.dataset&&e.target.dataset.n;if(!n){if(V.z>1){pan={x:e.clientX,y:e.clientY,cx:V.cx,cy:V.cy};fg.setPointerCapture(e.pointerId);e.preventDefault()}return}drag=n;fg.setPointerCapture(e.pointerId);e.preventDefault()});
+fg.addEventListener('pointermove',e=>{if(pan){const k=(14/V.z)/fg.getBoundingClientRect().width;V.cx=Math.max(-10,Math.min(10,pan.cx-(e.clientX-pan.x)*k));V.cy=Math.max(-9,Math.min(7,pan.cy-(e.clientY-pan.y)*k));applyView();return}if(!drag)return;const q=fg.createSVGPoint();q.x=e.clientX;q.y=e.clientY;const m=q.matrixTransform(fg.getScreenCTM().inverse());
+ const x=Math.max(-6.5,Math.min(6.5,Math.round(m.x*2)/2)),y=Math.max(-3.5,Math.min(5.5,Math.round(-m.y*2)/2));
+ if(PT[drag][0]!==x||PT[drag][1]!==y){PT[drag]=[x,y];solve(true)}});
+['pointerup','pointercancel'].forEach(t=>fg.addEventListener(t,()=>{drag=null;pan=null}));
+function plain(el){const c=el.cloneNode(true);c.querySelectorAll('.v').forEach(v=>v.textContent='→'+v.textContent);c.querySelectorAll('br').forEach(b=>b.replaceWith('\n'));return c.textContent}
+$('#cpy').onclick=async()=>{const b=$('#cpy');const t='Réponse : '+plain($('#ans').querySelector('p'))+'\n\n'+[...$('#steps').children].map((li,i)=>(i+1)+'. '+plain(li)).join('\n');
+ try{await navigator.clipboard.writeText(t);b.textContent='Copié'}catch(e){b.textContent='Copie impossible ici'}setTimeout(()=>{b.textContent='Copier la rédaction'},2000)};
+paint();
+</script>
+</body>
+</html>
